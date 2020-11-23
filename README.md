@@ -5,9 +5,9 @@
  
 - JSS images audit scripts and download script
 
-## This script is to get the list of:
+## The follow scripts:
 
-1. Title level bibs  run `rake jss_solr:titleBIDs` or `rake jss_solr:titleBIDs >> title_bibs"
+1. Title level bibs`  run `rake jss_solr:titleBIDs` or `rake jss_solr:titleBIDs >> title_bibs"
 
 2. Volume level pids and output the pids into a comma separated csv  run `rake jss_solr:volume >> volume_pids'
 
