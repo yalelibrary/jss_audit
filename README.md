@@ -1,7 +1,11 @@
 # jss_audit
-JSS images audit scripts and download script
+## Rake tasks:
+ - lib/tasks/jss_audit.rake
+ - Python audit scripts to compare pids in two csv: one output from federoa image server, another one is the output of solr query for page level pids. import_csv.py check fedora images output against solr page level pids
+ 
+- JSS images audit scripts and download script
 
-This script is to get the list of:
+## This script is to get the list of:
 
 1. Title level bibs  run `rake jss_solr:titleBIDs` or `rake jss_solr:titleBIDs >> title_bibs"
 
