@@ -5,7 +5,8 @@
  
 - JSS images audit scripts and download script
 
-## The follow scripts :https://github.com/yalelibrary/jss_audit/blob/master/lib/tasks/jss_audit.rake 
+## The follow scripts
+(1,2,3,4,6 are in https://github.com/yalelibrary/jss_audit/blob/master/lib/tasks/jss_audit.rake) 
 
 1.  Title level bibs  run `rake jss_solr:titleBIDs` or `rake jss_solr:titleBIDs >> title_bibs"
 
