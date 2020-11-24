@@ -48,11 +48,11 @@ def get_title_level_bibs
      results.push  p['BIBID']
       result << p['BIBID'] + ","
     end
-    puts "#{result}"
+    #puts "#{result}"
     results
   end
 
-#puts "BIBID        Number of Volumes:              Barcode: "
+#puts "BIBID     Title_PIDS   Volumes_PIDS    Barcode: "
 
 def get_volume_level(bibs)
   results =[]
@@ -60,7 +60,7 @@ def get_volume_level(bibs)
 
   bibs.each do |b|
     solr_query = "#{BASE_SOLR_URL}select"
-    solr_query = solr_query + "?indent=on&fq=LEVEL:volume AND BIBID:" + b + "&fl=BIBID,PID, VOLUME, SIP,numFound&wt=json&start=0&rows=600"
+    #=solr_query = solr_query + "?indent=on&fq=LEVEL:volume AND BIBID:" + b + "&fl=BIBID,PARENTPID,PID, VOLUME, SIP,numFound&wt=json&start=0&rows=600"
     #http://127.0.0.1:8035/apache-solr-3.3.0/select/?indent=on&fq=LEVEL:volume%20AND%20BIBID:911609&fl=numFound&wt=xml&start=0&rows=600
 
     solr_uri = URI(solr_query)
@@ -73,10 +73,10 @@ def get_volume_level(bibs)
     count = count + result_num;
    ##puts "---BIBID: #{b}, Volume: #{result_num}"
 
-   ##puts "BIBID, PID, VOLUME, SIP"
+   #puts "BIBID, PID, VOLUME, SIP"
     solr_docs.each do |p|
       #results.push p['BIBID']
-    ## puts "#{b}, #{p['PID']}, #{p['VOLUME']}, #{p['SIP']}"
+      puts "#{b}, #{p['PID']}, #{p['VOLUME']}, #{p['SIP']}"
       puts "#{p['SIP']}"
     end
   end
@@ -84,9 +84,33 @@ def get_volume_level(bibs)
   results
 end
 
+
+
+def get_volume_level_maura
+  results =[]
+
+  solr_query = "#{BASE_SOLR_URL}select"
+  solr_query = solr_query + "?indent=on&fq=LEVEL:volume &fl=BIBID,PARENTPID,PID, VOLUME, SIP,numFound&sort=BIBID asc&wt=json&start=0&rows=4000"
+    #http://127.0.0.1:8035/apache-solr-3.3.0/select/?indent=on&fq=LEVEL:volume%20AND%20BIBID:911609&fl=numFound&wt=xml&start=0&rows=600
+
+  solr_uri = URI(solr_query)
+    #puts ("solr_query for getting volume levels : #{solr_query} for bibid: #{b}\n")
+
+  solr_response = Net::HTTP.get(solr_uri)
+  solr_json = JSON.parse("#{solr_response}")
+  result_num = solr_json['response']['numFound'].to_i
+  solr_docs =solr_json['response']['docs']
+
+  puts "BIBID, Title_PIDS, Volumes_PIDS,  Barcode "
+  solr_docs.each do |p|
+     puts "#{p['BIBID']}, #{p['PARENTPID']}, #{p['PID']}, #{p['SIP']}"
+  end
+  puts "total volume level: #{result_num}"
+  results
+end
+
 def get_volume_level_pids
   results =[]
-  count = 0;
   result = "";
   solr_query = "#{BASE_SOLR_URL}select"
   solr_query = solr_query + "?indent=on&fq=LEVEL:volume &fl=BIBID,PID, VOLUME, SIP,numFound&wt=json&start=0&rows=600"
@@ -98,9 +122,8 @@ def get_volume_level_pids
   solr_json = JSON.parse("#{solr_response}")
   result_num = solr_json['response']['numFound'].to_i
   solr_docs =solr_json['response']['docs']
-  count = count + result_num;
   solr_docs.each do |p|
-    count +=1
+
       #results.push p['BIBID']
       ## puts "#{b}, #{p['PID']}, #{p['VOLUME']}, #{p['SIP']}"
     #puts "#{p['PID']}"
@@ -109,7 +132,8 @@ def get_volume_level_pids
   end
   #puts "total volume level: #{count}"
   #results
-  puts "#{result}"
+ # puts "#{result}"
+  puts "#{result_num}"
 end
 
 def get_page_level
@@ -492,6 +516,11 @@ namespace :jss_solr do
   desc "compare page_children_comma output pids with fedeora api to audit if all images are in the fedeora" #or compare two csv output with the python script
   task :audit do
     compare_csv_imagesAPI
+  end
+
+  desc "get bibid, titlepid, volumepid, barcode"
+  task :list_of_ids do
+    get_volume_level_maura
   end
 
   desc "Download all images and put in each volume pids folder"
